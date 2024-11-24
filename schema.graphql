@@ -1,0 +1,10 @@
+type Token @entity {
+  id: ID!
+  tokenAmount: BigInt!
+  plqAmount: BigInt!
+  startTime: BigInt!
+  dev: Owner!
+  name: String!
+  symbol: String!
+  migrated: Boolean!
+}

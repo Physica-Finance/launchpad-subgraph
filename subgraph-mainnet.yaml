@@ -1,0 +1,33 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: PhysicaTokenFactory
+    network: planq
+    source:
+      address: '0xCbBa284b657693D2F506aE3cea9D81F97c237261'
+      abi: PhysicaTokenFactory
+      startBlock: 11914370 # when first ewit-usdc nft was created
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Buy
+        - Launch
+        - Migrated
+        - Sell
+      abis:
+        - name: PhysicaTokenFactory
+          file: ./abis/PhysicaTokenFactory.json
+      eventHandlers:
+        - event: Buy(address,uint256,uint256)
+          handler: handleBuy
+        - event: Launch(address)
+          handler: handleLaunch
+        - event: Migrated(address,uint256,uint256,uint128)
+          handler: handleMigrate
+        - event: Sell(address,uint256,uint256)
+          handler: handleSell
+      file: ./src/nft-positions-manager-mapping.ts
