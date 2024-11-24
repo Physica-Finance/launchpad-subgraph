@@ -3,8 +3,49 @@ type Token @entity {
   tokenAmount: BigInt!
   plqAmount: BigInt!
   startTime: BigInt!
-  dev: Owner!
+  dev: Bytes!
   name: String!
   symbol: String!
+  ipfsHash: Bytes!
+  txCount: BigInt!
   migrated: Boolean!
+  buys: [Buy]! @derivedFrom(field: "token")
+  sells: [Sell]! @derivedFrom(field: "token")
+}
+
+type Buy @entity {
+  id: ID!
+  buyer: Bytes!
+  transaction: Transaction!
+  timestamp: BigInt!
+  token: Token!
+  plqAmount: BigInt!
+  tokenAmount: BigInt!
+}
+
+type Sell @entity {
+  # transaction hash + "#" + index in sell Transaction array
+  id: ID!
+  seller: Bytes!
+  transaction: Transaction!
+  timestamp: BigInt!
+  token: Token!
+  plqAmount: BigInt!
+  tokenAmount: BigInt!
+}
+
+type Transaction @entity {
+  # txn hash
+  id: ID!
+  # block txn was included in
+  blockNumber: BigInt!
+  # timestamp txn was confirmed
+  timestamp: BigInt!
+  # gas used during txn execution
+  gasLimit: BigInt!
+  from: Bytes!
+  gasPrice: BigInt!
+  # derived values
+  buys: [Buy]! @derivedFrom(field: "transaction")
+  sells: [Sell]! @derivedFrom(field: "transaction")
 }

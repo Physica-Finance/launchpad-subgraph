@@ -1,4 +1,4 @@
-specVersion: 0.0.2
+specVersion: 0.0.4
 schema:
   file: ./schema.graphql
 dataSources:
@@ -11,7 +11,7 @@ dataSources:
       startBlock: 11914370 # when first ewit-usdc nft was created
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - Buy
@@ -21,6 +21,14 @@ dataSources:
       abis:
         - name: PhysicaTokenFactory
           file: ./abis/PhysicaTokenFactory.json
+        - name: MetaManager
+          file: ./abis/MetaManager.json
+        - name: PhysicaErc20
+          file: ./abis/PhysicaErc20.json
+        - name: PhysicaErc20NameBytes
+          file: ./abis/PhysicaErc20NameBytes.json
+        - name: PhysicaErc20SymbolBytes
+          file: ./abis/PhysicaErc20SymbolBytes.json
       eventHandlers:
         - event: Buy(address,uint256,uint256)
           handler: handleBuy
@@ -30,4 +38,4 @@ dataSources:
           handler: handleMigrate
         - event: Sell(address,uint256,uint256)
           handler: handleSell
-      file: ./src/nft-positions-manager-mapping.ts
+      file: ./src/physica-token-factory-mapping.ts
