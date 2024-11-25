@@ -29,7 +29,7 @@ export function getBytes32FromMultiash(multihash) {
  * @param {Multihash} multihash
  * @returns {(string|null)} base58 encoded multihash string
  */
-export function getMultihashFromBytes32(multihash) {
+export function getMultihashFromBytes32(multihash) : String {
     const { digest, hashFunction, size } = multihash;
     if (size === 0) return null;
 
@@ -66,6 +66,6 @@ export function parseContractResponse(response) {
  * @param {array} response Response array from Solidity
  * @returns {string} base58 encoded multihash string
  */
-export function getMultihashFromContractResponse(response) {
+export function getMultihashFromContractResponse(response) : String {
     return getMultihashFromBytes32(parseContractResponse(response));
 }

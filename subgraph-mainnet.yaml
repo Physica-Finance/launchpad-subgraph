@@ -32,7 +32,7 @@ dataSources:
       eventHandlers:
         - event: Buy(address,uint256,uint256)
           handler: handleBuy
-        - event: Launch(address)
+        - event: Launch(address,uint8,uint256)
           handler: handleLaunch
         - event: Migrated(address,uint256,uint256,uint128)
           handler: handleMigrate

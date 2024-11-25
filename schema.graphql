@@ -3,10 +3,12 @@ type Token @entity {
   tokenAmount: BigInt!
   plqAmount: BigInt!
   startTime: BigInt!
+  migrationCap: BigInt!
+  initialSupply: BigInt!
   dev: Bytes!
   name: String!
   symbol: String!
-  ipfsHash: Bytes!
+  ipfsHash: String!
   txCount: BigInt!
   migrated: Boolean!
   buys: [Buy]! @derivedFrom(field: "token")
@@ -21,6 +23,7 @@ type Buy @entity {
   token: Token!
   plqAmount: BigInt!
   tokenAmount: BigInt!
+  price: BigInt!
 }
 
 type Sell @entity {
@@ -32,6 +35,7 @@ type Sell @entity {
   token: Token!
   plqAmount: BigInt!
   tokenAmount: BigInt!
+  price: BigInt!
 }
 
 type Transaction @entity {

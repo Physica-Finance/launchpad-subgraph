@@ -25,7 +25,10 @@ export function handleLaunch(event: Launch) {
         launchedToken.dev = loadTransaction(event).from
         launchedToken.startTime = event.block.timestamp
         launchedToken.migrated = false
-        launchedToken.ipfsHash = getMultihashFromContractResponse(entry)
+        launchedToken.migrationCap = event.params.migrationCap
+        launchedToken.initialSupply = event.params.initialSupply
+        launchedToken.ipfsHash = getMultihashFromContractResponse(entry).toString()
+        launchedToken.txCount = ZERO_BI
         launchedToken.plqAmount = ZERO_BI
         launchedToken.tokenAmount = ZERO_BI
         launchedToken.save()
@@ -43,6 +46,7 @@ export function handleBuy(event: Buy) {
     buy.buyer = transaction.from
     buy.timestamp = transaction.timestamp
     buy.token = token.id
+    buy.price = event.params.plqAmount.div(event.params.tokenAmount)
     buy.plqAmount = event.params.plqAmount
     buy.tokenAmount = event.params.tokenAmount
     token.save()
@@ -62,6 +66,7 @@ export function handleSell(event: Sell) {
     sell.token = token.id
     sell.plqAmount = event.params.plqAmount
     sell.tokenAmount = event.params.tokenAmount
+    sell.price = event.params.plqAmount.div(event.params.tokenAmount)
     token.save()
     sell.save()
 }
