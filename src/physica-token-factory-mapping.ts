@@ -7,16 +7,16 @@ import {Buy as buyEntity} from "../generated/schema";
 import {Sell as sellEntity} from "../generated/schema";
 import {fetchTokenName, fetchTokenSymbol} from "./utils/token";
 import {loadTransaction} from "./utils";
-import {getMultihashFromContractResponse} from "./utils/multihash";
+import {getMultihashFromContractReponseSingle} from "./utils/multihash";
 
-export function handleLaunch(event: Launch) {
+export function handleLaunch(event: Launch) : void {
     let token = Token.load(event.params.tokenAddress.toHexString())
     if (token === null) {
         token = new Token(event.params.tokenAddress.toHexString())
 
         let metaManager = MetaManager.bind(Address.fromString(META_MANAGER_ADDRESS))
         let entry = metaManager.getEntry(event.params.tokenAddress)
-
+        let multihash = getMultihashFromContractReponseSingle(entry.getDigest(), entry.getHashfunction(), entry.getSize())
         let tokenSymbol = fetchTokenSymbol(event.params.tokenAddress)
         let tokenName = fetchTokenName(event.params.tokenAddress)
         let launchedToken = new Token(event.params.tokenAddress.toHexString())
@@ -27,7 +27,7 @@ export function handleLaunch(event: Launch) {
         launchedToken.migrated = false
         launchedToken.migrationCap = event.params.migrationCap
         launchedToken.initialSupply = event.params.initialSupply
-        launchedToken.ipfsHash = getMultihashFromContractResponse(entry).toString()
+        launchedToken.ipfsHash = multihash!
         launchedToken.txCount = ZERO_BI
         launchedToken.plqAmount = ZERO_BI
         launchedToken.tokenAmount = ZERO_BI
@@ -35,8 +35,8 @@ export function handleLaunch(event: Launch) {
     }
 }
 
-export function handleBuy(event: Buy) {
-    let token = Token.load(event.params.token.toHexString())
+export function handleBuy(event: Buy) : void {
+    let token = Token.load(event.params.token.toHexString())!
     token.txCount = token.txCount.plus(ONE_BI)
     token.tokenAmount = token.tokenAmount.minus(event.params.tokenAmount)
     token.plqAmount = token.plqAmount.plus(event.params.plqAmount)
@@ -53,8 +53,8 @@ export function handleBuy(event: Buy) {
     buy.save()
 }
 
-export function handleSell(event: Sell) {
-    let token = Token.load(event.params.token.toHexString())
+export function handleSell(event: Sell) : void {
+    let token = Token.load(event.params.token.toHexString())!
     token.txCount = token.txCount.plus(ONE_BI)
     token.tokenAmount = token.tokenAmount.plus(event.params.tokenAmount)
     token.plqAmount = token.plqAmount.minus(event.params.plqAmount)
@@ -71,8 +71,8 @@ export function handleSell(event: Sell) {
     sell.save()
 }
 
-export function handleMigrate(event: Migrated) {
-    let token = Token.load(event.params.token.toHexString())
+export function handleMigrate(event: Migrated) : void {
+    let token = Token.load(event.params.token.toHexString())!
     token.migrated = true
     token.save()
 }

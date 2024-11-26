@@ -1,4 +1,5 @@
-import bs58 from 'bs58';
+import bs58 from './bs58'
+import {Bytes} from "@graphprotocol/graph-ts";
 
 /**
  * @typedef {Object} Multihash
@@ -7,20 +8,32 @@ import bs58 from 'bs58';
  * @property {number} size The length of digest
  */
 
+class Multihash {
+    constructor(digest: Uint8Array, hashFunction: u32, size: u32) {
+        this.digest = digest
+        this.hashFunction = hashFunction
+        this.size = size
+    }
+
+    digest: Uint8Array
+    hashFunction: u32
+    size: u32
+}
+
 /**
  * Partition multihash string into object representing multihash
  *
  * @param {string} multihash A base58 encoded multihash string
  * @returns {Multihash}
  */
-export function getBytes32FromMultiash(multihash) {
-    const decoded = bs58.decode(multihash);
+export function getBytes32FromMultiash(multihash: string): Multihash {
+    const decoded = bs58.decode(multihash)
 
     return {
-        digest: `0x${decoded.slice(2).toString('hex')}`,
+        digest: decoded.subarray(2),
         hashFunction: decoded[0],
         size: decoded[1],
-    };
+    }
 }
 
 /**
@@ -29,43 +42,22 @@ export function getBytes32FromMultiash(multihash) {
  * @param {Multihash} multihash
  * @returns {(string|null)} base58 encoded multihash string
  */
-export function getMultihashFromBytes32(multihash) : String {
-    const { digest, hashFunction, size } = multihash;
-    if (size === 0) return null;
+export function getMultihashFromBytes32(multihash: Multihash): string | null {
+    if (multihash.size === 0) return null
 
     // cut off leading "0x"
-    const hashBytes = Buffer.from(digest.slice(2), 'hex');
+    const hashBytes = multihash.digest.slice(2)
 
     // prepend hashFunction and digest size
-    const multihashBytes = new (hashBytes.constructor)(2 + hashBytes.length);
-    multihashBytes[0] = hashFunction;
-    multihashBytes[1] = size;
-    multihashBytes.set(hashBytes, 2);
+    const multihashBytes = new Bytes(2 + hashBytes.length)
+    multihashBytes[0] = multihash.hashFunction
+    multihashBytes[1] = multihash.size
+    multihashBytes.set(hashBytes, 2)
 
-    return bs58.encode(multihashBytes);
+    return multihashBytes.toBase58()
 }
 
-/**
- * Parse Solidity response in array to a Multihash object
- *
- * @param {array} response Response array from Solidity
- * @returns {Multihash} multihash object
- */
-export function parseContractResponse(response) {
-    const [digest, hashFunction, size, id] = response;
-    return {
-        digest,
-        hashFunction: hashFunction.toNumber(),
-        size: size.toNumber(),
-    };
-}
 
-/**
- * Parse Solidity response in array to a base58 encoded multihash string
- *
- * @param {array} response Response array from Solidity
- * @returns {string} base58 encoded multihash string
- */
-export function getMultihashFromContractResponse(response) : String {
-    return getMultihashFromBytes32(parseContractResponse(response));
+export function getMultihashFromContractReponseSingle(digest: Uint8Array, hashFunction: u32, size: u32): string | null {
+    return getMultihashFromBytes32(new Multihash(digest, hashFunction, size))
 }
