@@ -3,7 +3,7 @@ type Token @entity {
   tokenAmount: BigInt!
   plqAmount: BigInt!
   startTime: BigInt!
-  migrationCap: BigInt!
+  migrationCap: Int!
   initialSupply: BigInt!
   dev: Bytes!
   name: String!
