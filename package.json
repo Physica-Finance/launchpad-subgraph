@@ -4,8 +4,8 @@
   "scripts": {
     "codegen": "graph codegen -- subgraph-mainnet.yaml",
     "build": "graph build -- subgraph-mainnet.yaml",
-    "create-graph": "graph create --node http://127.0.0.1:8020 -- physica/launchpad subgraph-mainnet.yaml",
-    "deploy": "graph deploy --node http://127.0.0.1:8020 -- physica/launchpad subgraph-mainnet.yaml"
+    "create-graph": "graph create --node http://127.0.0.1:8020 -- physica/launchpad",
+    "deploy": "graph deploy --ipfs https://api.thegraph.com/ipfs/ --node http://127.0.0.1:8020 -- physica/launchpad subgraph-mainnet.yaml"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.89.0",
