@@ -46,7 +46,7 @@ export function getMultihashFromBytes32(multihash: Multihash): string | null {
     if (multihash.size === 0) return null
 
     // cut off leading "0x"
-    const hashBytes = multihash.digest.slice(2)
+    const hashBytes = multihash.digest
 
     // prepend hashFunction and digest size
     const multihashBytes = new Bytes(2 + hashBytes.length)
