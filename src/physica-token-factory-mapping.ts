@@ -46,7 +46,7 @@ export function handleBuy(event: Buy) : void {
     buy.buyer = transaction.from
     buy.timestamp = transaction.timestamp
     buy.token = token.id
-    buy.price = event.params.plqAmount.div(event.params.tokenAmount)
+    buy.price = event.params.plqAmount.toBigDecimal().div(event.params.tokenAmount.toBigDecimal())
     buy.plqAmount = event.params.plqAmount
     buy.tokenAmount = event.params.tokenAmount
     token.save()
@@ -66,7 +66,7 @@ export function handleSell(event: Sell) : void {
     sell.token = token.id
     sell.plqAmount = event.params.plqAmount
     sell.tokenAmount = event.params.tokenAmount
-    sell.price = event.params.plqAmount.div(event.params.tokenAmount)
+    sell.price = event.params.plqAmount.toBigDecimal().div(event.params.tokenAmount.toBigDecimal())
     token.save()
     sell.save()
 }
