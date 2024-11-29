@@ -1,4 +1,3 @@
-import bs58 from './bs58'
 import {Bytes} from "@graphprotocol/graph-ts";
 
 /**
@@ -20,21 +19,6 @@ class Multihash {
     size: u32
 }
 
-/**
- * Partition multihash string into object representing multihash
- *
- * @param {string} multihash A base58 encoded multihash string
- * @returns {Multihash}
- */
-export function getBytes32FromMultiash(multihash: string): Multihash {
-    const decoded = bs58.decode(multihash)
-
-    return {
-        digest: decoded.subarray(2),
-        hashFunction: decoded[0],
-        size: decoded[1],
-    }
-}
 
 /**
  * Encode a multihash structure into base58 encoded multihash string

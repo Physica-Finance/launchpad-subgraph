@@ -31,11 +31,11 @@ dataSources:
           file: ./abis/PhysicaErc20SymbolBytes.json
       eventHandlers:
         - event: Buy(address,uint256,uint256)
-          handler: handleBuy
+          handler: handleTxBuy
         - event: Launch(address,uint8,uint256)
           handler: handleLaunch
         - event: Migrated(address,uint256,uint256,uint128)
           handler: handleMigrate
         - event: Sell(address,uint256,uint256)
-          handler: handleSell
+          handler: handleTxSell
       file: ./src/physica-token-factory-mapping.ts

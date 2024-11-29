@@ -2,11 +2,11 @@ import {Buy, Launch, Migrated, Sell} from "../generated/PhysicaTokenFactory/Phys
 import {META_MANAGER_ADDRESS, ONE_BI, ZERO_BI} from "./utils/constants";
 import {MetaManager} from "../generated/PhysicaTokenFactory/MetaManager";
 import {Address} from "@graphprotocol/graph-ts";
-import {Token} from "../generated/schema";
-import {Buy as buyEntity} from "../generated/schema";
-import {Sell as sellEntity} from "../generated/schema";
-import {fetchTokenName, fetchTokenSymbol} from "./utils/token";
+import {Token, Tx} from "../generated/schema";
+import {Tx as txEntity} from "../generated/schema";
+import {fetchPlqHolding, fetchTokenHolding, fetchTokenName, fetchTokenSymbol} from "./utils/token";
 import {loadTransaction} from "./utils";
+import { BigInt } from '@graphprotocol/graph-ts'
 import {getMultihashFromContractReponseSingle} from "./utils/multihash";
 
 export function handleLaunch(event: Launch) : void {
@@ -29,46 +29,51 @@ export function handleLaunch(event: Launch) : void {
         launchedToken.initialSupply = event.params.initialSupply
         launchedToken.ipfsHash = multihash!
         launchedToken.txCount = ZERO_BI
-        launchedToken.plqAmount = ZERO_BI
-        launchedToken.tokenAmount = ZERO_BI
+        launchedToken.plqAmount = BigInt.fromString(fetchPlqHolding(event.params.tokenAddress))
+        launchedToken.tokenAmount = BigInt.fromString(fetchTokenHolding(event.params.tokenAddress))
         launchedToken.save()
     }
 }
 
-export function handleBuy(event: Buy) : void {
+export function handleTxBuy(event: Buy): void {
     let token = Token.load(event.params.token.toHexString())!
     token.txCount = token.txCount.plus(ONE_BI)
     token.tokenAmount = token.tokenAmount.minus(event.params.tokenAmount)
     token.plqAmount = token.plqAmount.plus(event.params.plqAmount)
+
+
     let transaction = loadTransaction(event)
-    let buy = new buyEntity(transaction.id.toString()+ '#' + token.txCount.toString())
-    buy.transaction = transaction.id
-    buy.buyer = transaction.from
-    buy.timestamp = transaction.timestamp
-    buy.token = token.id
-    buy.price = event.params.plqAmount.toBigDecimal().div(event.params.tokenAmount.toBigDecimal())
-    buy.plqAmount = event.params.plqAmount
-    buy.tokenAmount = event.params.tokenAmount
+    let tx = new txEntity(transaction.id.toString()+ '#' + token.txCount.toString())
+    tx.transaction = transaction.id
+    tx.from = transaction.from
+    tx.timestamp = transaction.timestamp
+    tx.token = token.id
+    tx.price = event.params.plqAmount.toBigDecimal().div(event.params.tokenAmount.toBigDecimal())
+    tx.plqAmount = event.params.plqAmount
+    tx.tokenAmount = event.params.tokenAmount
+    tx.buy = true
     token.save()
-    buy.save()
+    tx.save()
 }
 
-export function handleSell(event: Sell) : void {
+export function handleTxSell(event: Sell): void {
     let token = Token.load(event.params.token.toHexString())!
     token.txCount = token.txCount.plus(ONE_BI)
     token.tokenAmount = token.tokenAmount.plus(event.params.tokenAmount)
     token.plqAmount = token.plqAmount.minus(event.params.plqAmount)
+
     let transaction = loadTransaction(event)
-    let sell = new sellEntity(transaction.id.toString()+ '#' + token.txCount.toString())
-    sell.transaction = transaction.id
-    sell.seller = transaction.from
-    sell.timestamp = transaction.timestamp
-    sell.token = token.id
-    sell.plqAmount = event.params.plqAmount
-    sell.tokenAmount = event.params.tokenAmount
-    sell.price = event.params.plqAmount.toBigDecimal().div(event.params.tokenAmount.toBigDecimal())
+    let tx = new txEntity(transaction.id.toString()+ '#' + token.txCount.toString())
+    tx.transaction = transaction.id
+    tx.from = transaction.from
+    tx.timestamp = transaction.timestamp
+    tx.token = token.id
+    tx.price = event.params.plqAmount.toBigDecimal().div(event.params.tokenAmount.toBigDecimal())
+    tx.plqAmount = event.params.plqAmount
+    tx.tokenAmount = event.params.tokenAmount
+    tx.buy = false
     token.save()
-    sell.save()
+    tx.save()
 }
 
 export function handleMigrate(event: Migrated) : void {
