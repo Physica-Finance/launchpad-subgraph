@@ -48,7 +48,11 @@ export function handleTxBuy(event: Buy): void {
     tx.from = transaction.from
     tx.timestamp = transaction.timestamp
     tx.token = token.id
-    tx.price = event.params.plqAmount.toBigDecimal().div(event.params.tokenAmount.toBigDecimal())
+    if(event.params.tokenAmount.equals(ZERO_BI)){
+        tx.price = ZERO_BI.toBigDecimal()
+    } else {
+        tx.price = event.params.plqAmount.toBigDecimal().div(event.params.tokenAmount.toBigDecimal())
+    }
     tx.plqAmount = event.params.plqAmount
     tx.tokenAmount = event.params.tokenAmount
     tx.buy = true
@@ -68,7 +72,11 @@ export function handleTxSell(event: Sell): void {
     tx.from = transaction.from
     tx.timestamp = transaction.timestamp
     tx.token = token.id
-    tx.price = event.params.plqAmount.toBigDecimal().div(event.params.tokenAmount.toBigDecimal())
+    if(event.params.tokenAmount.equals(ZERO_BI)){
+        tx.price = ZERO_BI.toBigDecimal()
+    } else {
+        tx.price = event.params.plqAmount.toBigDecimal().div(event.params.tokenAmount.toBigDecimal())
+    }
     tx.plqAmount = event.params.plqAmount
     tx.tokenAmount = event.params.tokenAmount
     tx.buy = false
